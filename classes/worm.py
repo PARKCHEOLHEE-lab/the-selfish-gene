@@ -1,7 +1,8 @@
-import pygame
 import random
+import pygame
 import math
 import copy
+import shapely
 from typing import List, Tuple
 
 from classes.constants import EnvironmentConsts, ColorConsts, DirectionConsts, DisplayConsts
@@ -196,20 +197,23 @@ class Worm(WormGene, WormHelper):
         self.eaten_count: int
         self.eaten_count = 0
         
-    def draw(self, display: pygame.display) -> None:
+    def drawing(self, display: pygame.display) -> None:
         self._draw_body(display, self.body, self.color)
         self._draw_sense(display)
         self._draw_eaten_count(display, self.eaten_count, self.body)
 
-    def move(self) -> None:
+    def moving(self) -> None:
         self.direction: str
         self.direction = self._get_random_direction(self.direction, self.switch)
 
         self.body: List[List[int]]
         self.body = self._get_moved_body(self.body, self.direction, self.speed)
         
-    def eat(self, apples: List[Apple]) -> None:
+    def eating(self, apples: List[Apple]) -> None:
         self.body: List[List[int]]
         self.body, ate = self._get_grown_body(self.body, apples)
         if ate:
             self.eaten_count += 1
+            
+    def sensing(self):
+        pass

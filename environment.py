@@ -61,9 +61,9 @@ class Environment(EnvironmentHelper):
                 apple.draw(self.display)
 
             for worm in worms:
-                worm.draw(self.display)
-                worm.move()
-                worm.eat(apples)
+                worm.drawing(self.display)
+                worm.moving()
+                worm.eating(apples)
                 
             
             pygame.display.update()

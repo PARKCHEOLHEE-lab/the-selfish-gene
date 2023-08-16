@@ -4,6 +4,7 @@ import pygame
 from typing import List
 from classes.constants import DisplayConsts, EnvironmentConsts, ColorConsts
 
+
 class AppleHelper:
     def _get_random_position(self, except_positions: List[List[int]]) -> List[float]:
         position_x_range = range(DisplayConsts.GAP, DisplayConsts.WIDTH - DisplayConsts.GAP, EnvironmentConsts.WORM_SIZE)
@@ -20,6 +21,7 @@ class AppleHelper:
             random_position_y = random.choice(position_y_candidates) + EnvironmentConsts.WORM_SIZE / 2
         
         return [random_position_x, random_position_y]
+
 
 class Apple(AppleHelper):
     def __init__(self, except_positions):
