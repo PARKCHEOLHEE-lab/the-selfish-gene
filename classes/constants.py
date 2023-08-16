@@ -13,7 +13,7 @@ class EnvironmentConsts:
 class DisplayConsts:
     WIDTH = 500
     HEIGHT = 500
-    FRAME_SPEED = 70
+    FRAME_SPEED = 30
 
     GAP = EnvironmentConsts.WORM_SIZE * EnvironmentConsts.WORM_BASIC_LENGTH
     

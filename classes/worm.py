@@ -200,7 +200,7 @@ class Worm(WormGene, WormHelper):
     def drawing(self, display: pygame.display) -> None:
         self._draw_body(display, self.body, self.color)
         self._draw_sense(display)
-        self._draw_eaten_count(display, self.eaten_count, self.body)
+        # self._draw_eaten_count(display, self.eaten_count, self.body)
 
     def moving(self) -> None:
         self.direction: str
