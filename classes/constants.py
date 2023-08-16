@@ -1,18 +1,19 @@
 class EnvironmentConsts:
     
     WORM_SPEED_ORIGINAL = 1
-    WORM_SENSE = 20
-    WORM_DIRECTION_SWITCH_PROBABILITY = 0.3
+    WORM_SENSE = 30
+    WORM_DIRECTION_SWITCH_PROBABILITY = 0.5
     WORM_BASIC_LENGTH = 6
     
     WORM_SIZE = 10
-    FOOD_SIZE = 10
+    APPLE_SIZE = 10
+    APPLE_COUNT = 20
     
     
 class DisplayConsts:
     WIDTH = 500
     HEIGHT = 500
-    FRAME_SPEED = 20
+    FRAME_SPEED = 70
 
     GAP = EnvironmentConsts.WORM_SIZE * EnvironmentConsts.WORM_BASIC_LENGTH
     
