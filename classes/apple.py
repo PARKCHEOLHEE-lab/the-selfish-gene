@@ -8,19 +8,20 @@ from classes.constants import DisplayConsts, EnvironmentConsts, ColorConsts
 class AppleHelper:
     def _get_random_position(self, except_positions: List[List[int]]) -> List[float]:
         position_x_range = range(DisplayConsts.GAP, DisplayConsts.WIDTH - DisplayConsts.GAP, EnvironmentConsts.WORM_SIZE)
-        position_x_candidates = [candidate for candidate in position_x_range]
-
         position_y_range = range(DisplayConsts.GAP, DisplayConsts.HEIGHT - DisplayConsts.GAP, EnvironmentConsts.WORM_SIZE)
-        position_y_candidates = [candidate for candidate in position_y_range]
         
-        random_position_x = random.choice(position_x_candidates) + EnvironmentConsts.WORM_SIZE / 2
-        random_position_y = random.choice(position_y_candidates) + EnvironmentConsts.WORM_SIZE / 2
+        available_positions = []
+        for x in position_x_range:
+            for y in position_y_range:
+                position = [x + EnvironmentConsts.WORM_SIZE / 2, y + EnvironmentConsts.WORM_SIZE / 2]
+                if position not in except_positions:
+                    available_positions.append(position)
         
-        while [random_position_x, random_position_y] in except_positions:
-            random_position_x = random.choice(position_x_candidates) + EnvironmentConsts.WORM_SIZE / 2
-            random_position_y = random.choice(position_y_candidates) + EnvironmentConsts.WORM_SIZE / 2
+        if not available_positions:
+            raise ValueError("No valid positions available")
         
-        return [random_position_x, random_position_y]
+        random_position = random.choice(available_positions)
+        return random_position
 
 
 class Apple(AppleHelper):
