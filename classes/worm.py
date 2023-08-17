@@ -2,7 +2,6 @@ import random
 import pygame
 import math
 import copy
-import shapely
 from typing import List, Tuple
 
 from classes.constants import EnvironmentConsts, ColorConsts, DirectionConsts, DisplayConsts
@@ -156,6 +155,81 @@ class WormHelper:
                 break
             
         return body, ate
+    
+    def _get_nearest_apple(self, head: List[int], apples: List[Apple]) -> bool:
+        sense_origin = [
+            head[0] + EnvironmentConsts.WORM_SIZE/ 2, 
+            head[1] + EnvironmentConsts.WORM_SIZE/ 2
+        ]
+        
+        nearest_apple = None
+        nearest_distance = math.inf
+        
+        for apple in apples:
+            apple_x = apple.position[0] - EnvironmentConsts.WORM_SIZE / 2
+            apple_y = apple.position[1] - EnvironmentConsts.WORM_SIZE / 2
+            apple_position = [apple_x, apple_y]
+            
+            haed_to_apple = math.sqrt(
+                (apple_position[0] - sense_origin[0])**2 + (apple_position[1] - sense_origin[1])**2
+            )
+            
+            if haed_to_apple <= EnvironmentConsts.WORM_SENSE:
+                if nearest_apple is None:
+                    nearest_apple = apple
+                    nearest_distance = haed_to_apple
+                
+                elif haed_to_apple < nearest_distance:
+                    nearest_apple = apple             
+        
+        return nearest_apple
+
+    def _get_direction_by_sense(self, head: List[int], nearest_apple: Apple, direction: str):
+        
+        head_x = head[0]
+        head_y = head[1]
+        apple_x = nearest_apple.position[0] - EnvironmentConsts.WORM_SIZE / 2
+        apple_y = nearest_apple.position[1] - EnvironmentConsts.WORM_SIZE / 2 
+        
+        vector_head_to_apple = [apple_x - head_x, apple_y - head_y]
+        vector_head_to_apple_radians = math.atan2(vector_head_to_apple[1], vector_head_to_apple[0])
+        vector_head_to_apple_degrees = math.degrees(vector_head_to_apple_radians)
+
+        vector_up = [0, 1]
+        vector_down = [0, -1]
+        vector_right = [1, 0]
+        vector_left = [-1, 0]
+        
+        unit_vectors = [vector_left, vector_up, vector_right, vector_down]
+        unit_vectors_directions = [DirectionConsts.DIRECTION_LEFT, DirectionConsts.DIRECTION_DOWN, DirectionConsts.DIRECTION_RIGHT, DirectionConsts.DIRECTION_UP]
+        
+        if direction == DirectionConsts.DIRECTION_UP:
+            unit_vectors.remove(vector_down) 
+            unit_vectors_directions.remove(DirectionConsts.DIRECTION_DOWN)
+        elif direction == DirectionConsts.DIRECTION_DOWN:
+            unit_vectors.remove(vector_up) 
+            unit_vectors_directions.remove(DirectionConsts.DIRECTION_UP)
+        elif direction == DirectionConsts.DIRECTION_LEFT:
+            unit_vectors.remove(vector_right) 
+            unit_vectors_directions.remove(DirectionConsts.DIRECTION_RIGHT)
+        elif direction == DirectionConsts.DIRECTION_RIGHT:
+            unit_vectors.remove(vector_left)
+            unit_vectors_directions.remove(DirectionConsts.DIRECTION_LEFT)
+    
+        most_similar_direction = direction
+        degree_diff = math.inf
+
+        for unit_vector, unit_vector_direction in zip(unit_vectors, unit_vectors_directions):
+            unit_vector_radians = math.atan2(unit_vector[1], unit_vector[0])
+            unit_vector_degrees = math.degrees(unit_vector_radians)
+            
+            diff = abs(vector_head_to_apple_degrees - unit_vector_degrees)
+            if  diff < degree_diff:
+                most_similar_direction = unit_vector_direction
+                degree_diff = diff
+                            
+        return most_similar_direction
+        
         
 
 class WormGene:
@@ -202,10 +276,14 @@ class Worm(WormGene, WormHelper):
         self._draw_sense(display)
         # self._draw_eaten_count(display, self.eaten_count, self.body)
 
-    def moving(self) -> None:
+    def moving(self, apples: List[Apple]) -> None:
         self.direction: str
         self.direction = self._get_random_direction(self.direction, self.switch)
-
+        
+        nearest_apple = self._get_nearest_apple(self.body[-1], apples)
+        if nearest_apple is not None:
+            self.direction = self._get_direction_by_sense(self.body[-1], nearest_apple, self.direction)
+        
         self.body: List[List[int]]
         self.body = self._get_moved_body(self.body, self.direction, self.speed)
         
@@ -214,6 +292,3 @@ class Worm(WormGene, WormHelper):
         self.body, ate = self._get_grown_body(self.body, apples)
         if ate:
             self.eaten_count += 1
-            
-    def sensing(self):
-        pass
