@@ -9,6 +9,10 @@ class EnvironmentConsts:
     APPLE_SIZE = 10
     APPLE_COUNT = 20
     
+    INIT_GENERATION = 50
+    INIT_POPULATION = 10
+    INIT_SEED = 777
+    
     
 class DisplayConsts:
     WIDTH = 500

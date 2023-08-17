@@ -27,7 +27,12 @@ class EnvironmentHelper:
     
 
 class Environment(EnvironmentHelper):
-    def __init__(self, seed=777, generation=50, population=10):
+    def __init__(
+        self, 
+        seed=EnvironmentConsts.INIT_SEED, 
+        generation=EnvironmentConsts.INIT_GENERATION, 
+        population=EnvironmentConsts.INIT_POPULATION
+    ):
         random.seed(seed)
         pygame.init()
         pygame.display.set_caption('The Selfish Gene')
@@ -37,38 +42,44 @@ class Environment(EnvironmentHelper):
         self.population = population
 
         self.display = pygame.display.set_mode((DisplayConsts.WIDTH, DisplayConsts.HEIGHT))
-        self.over = False
         
     def simulate(self) -> None:
+        
+        gen = self.generation
+        pop = self.population 
+        
+        for _ in range(gen):
+        
+            worms = [Worm() for _ in range(pop)]
+            apples = []
+            apples_positions = []
+            for _ in range(EnvironmentConsts.APPLE_COUNT):
+                apple = Apple(except_positions=apples_positions)
+                apples.append(apple)
+                apples_positions.append(apple.position)
 
-        worms = [Worm() for _ in range(self.population)]
-        apples = []
-        apples_positions = []
-        for _ in range(EnvironmentConsts.APPLE_COUNT):
-            apple = Apple(except_positions=apples_positions)
-            apples.append(apple)
-            apples_positions.append(apple.position)
-    
-        while not self.over:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.over = True
-                        
-            self.display.fill(ColorConsts.BLACK)
-            self._draw_grid(self.display)
-            
-            for apple in apples:
-                apple.draw(self.display)
-
-            for worm in worms:
-                worm.drawing(self.display)
-                worm.moving()
-                worm.eating(apples)
+            over = False
+            while not over:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        over = True
+                            
+                self.display.fill(ColorConsts.BLACK)
+                self._draw_grid(self.display)
                 
-            
-            pygame.display.update()
-            
-            pygame.time.Clock().tick(DisplayConsts.FRAME_SPEED)
+                for apple in apples:
+                    apple.draw(self.display)
+
+                for worm in worms:
+                    worm.drawing(self.display)
+                    worm.moving(apples)
+                    worm.eating(apples)
+                    
+                if len(apples) == 0:
+                    over = True
+                    
+                pygame.display.update()
+                pygame.time.Clock().tick(DisplayConsts.FRAME_SPEED)
 
         pygame.quit()
 
