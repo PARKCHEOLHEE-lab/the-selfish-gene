@@ -4,20 +4,23 @@ class EnvironmentConsts:
     WORM_SENSE = 30
     WORM_DIRECTION_SWITCH_PROBABILITY = 0.5
     WORM_BASIC_LENGTH = 6
+    WORM_EVOLVING_PROBABILITY_TRISECT = 0.333
+    WORM_EVOLVING_PROBABILITY_BISECT = 0.5
     
     WORM_SIZE = 10
     APPLE_SIZE = 10
     APPLE_COUNT = 20
     
-    INIT_GENERATION = 50
-    INIT_POPULATION = 10
+    INIT_GENERATION = 30
+    INIT_POPULATION = 15
     INIT_SEED = 777
+    
     
     
 class DisplayConsts:
     WIDTH = 500
     HEIGHT = 500
-    FRAME_SPEED = 30
+    FRAME_SPEED = 50
 
     GAP = EnvironmentConsts.WORM_SIZE * EnvironmentConsts.WORM_BASIC_LENGTH
     

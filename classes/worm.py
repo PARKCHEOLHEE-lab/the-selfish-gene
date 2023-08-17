@@ -229,6 +229,31 @@ class WormHelper:
                 degree_diff = diff
                             
         return most_similar_direction
+    
+    def _get_gene(self, speed: int, sense: float, switch: float):
+
+        probability = random.random()
+        if probability < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_TRISECT:
+            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+                speed += 1
+            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+                sense += 10
+            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+                switch += 0.03
+        
+        elif (
+            EnvironmentConsts.WORM_EVOLVING_PROBABILITY_TRISECT 
+            <= probability 
+            < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_TRISECT * 2
+        ):
+            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+                speed -= 1
+            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+                sense -= 10
+            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+                switch -= 0.03
+          
+        return speed, sense, switch
         
         
 
@@ -289,6 +314,15 @@ class Worm(WormGene, WormHelper):
         
     def eating(self, apples: List[Apple]) -> None:
         self.body: List[List[int]]
+        ate: bool
+        
         self.body, ate = self._get_grown_body(self.body, apples)
-        if ate:
-            self.eaten_count += 1
+        self.eaten_count += bool(ate)
+        
+    def evolving(self) -> None:
+        self.speed: int
+        self.sense: float
+        self.switch: float
+        
+        self.speed, self.sense, self.switch = self._get_gene(self.speed, self.sense, self.switch)
+        

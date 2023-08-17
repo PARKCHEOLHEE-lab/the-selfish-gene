@@ -4,6 +4,7 @@ import pygame
 from classes.constants import EnvironmentConsts, ColorConsts, DisplayConsts
 from classes.worm import Worm
 from classes.apple import Apple
+from typing import List, Tuple
 
 class EnvironmentHelper:
     def _draw_grid(self, display: pygame.display) -> None:
@@ -24,8 +25,17 @@ class EnvironmentHelper:
                 [DisplayConsts.WIDTH, hi * EnvironmentConsts.WORM_SIZE], 
                 1
             )
-    
+            
+    def _get_apples(self, apple_count: int) -> List[Apple]:
+        apples = []
+        apples_positions = []
+        for _ in range(EnvironmentConsts.APPLE_COUNT):
+            apple = Apple(except_positions=apples_positions)
+            apples.append(apple)
+            apples_positions.append(apple.position)
 
+        return apples
+            
 class Environment(EnvironmentHelper):
     def __init__(
         self, 
@@ -48,15 +58,19 @@ class Environment(EnvironmentHelper):
         gen = self.generation
         pop = self.population 
         
-        for _ in range(gen):
+        apple_count = EnvironmentConsts.APPLE_COUNT 
         
+        for g in range(gen):
+            
+            worms: List[Worm]
             worms = [Worm() for _ in range(pop)]
-            apples = []
-            apples_positions = []
-            for _ in range(EnvironmentConsts.APPLE_COUNT):
-                apple = Apple(except_positions=apples_positions)
-                apples.append(apple)
-                apples_positions.append(apple.position)
+            
+            # if g > 0:
+            #     for worm in worms:
+            #         worm.evolving()
+
+            apples: List[Apple]
+            apples = self._get_apples(apple_count)
 
             over = False
             while not over:
@@ -80,6 +94,10 @@ class Environment(EnvironmentHelper):
                     
                 pygame.display.update()
                 pygame.time.Clock().tick(DisplayConsts.FRAME_SPEED)
+                
+            pop = len([worm for worm in worms if worm.eaten_count > 0])
+            if g % 2 == 0:
+                apple_count -= 1
 
         pygame.quit()
 
