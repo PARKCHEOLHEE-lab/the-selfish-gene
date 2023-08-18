@@ -1,5 +1,6 @@
 import random
 import pygame
+import argparse
 
 from classes.constants import EnvironmentConsts, ColorConsts, DisplayConsts
 from classes.worm import Worm
@@ -102,5 +103,12 @@ class Environment(EnvironmentHelper):
         pygame.quit()
 
 if __name__ == "__main__":
-    env = Environment()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("generation", type=int)
+    parser.add_argument("population", type=int)
+    parser.add_argument("seed", type=int)
+    
+    args = parser.parse_args()
+    
+    env = Environment(**args.__dict__)
     env.simulate()
