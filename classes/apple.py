@@ -25,16 +25,14 @@ class AppleHelper:
 
 
 class Apple(AppleHelper):
-    def __init__(self, except_positions):
-        self.eaten = False
+    def __init__(self, except_positions: List[List[int]]):
         self.except_positions = except_positions
         self.position = self._get_random_position(except_positions)
         
     def draw(self, display: pygame.display) -> None:
-        if not self.eaten:
-            pygame.draw.circle(
-                display, 
-                ColorConsts.RED,
-                self.position,
-                EnvironmentConsts.WORM_SIZE / 2,
-            )
+        pygame.draw.circle(
+            display, 
+            ColorConsts.RED,
+            self.position,
+            EnvironmentConsts.WORM_SIZE / 2,
+        )
