@@ -1,8 +1,8 @@
 class EnvironmentConsts:
     
     WORM_SPEED_ORIGINAL = 1
-    WORM_SENSE = 30
-    WORM_DIRECTION_SWITCH_PROBABILITY = 0.5
+    WORM_SENSE_ORIGINAL = 30
+    WORM_SWITCH_ORIGINAL = 0.5
     WORM_BASIC_LENGTH = 6
     WORM_EVOLVING_PROBABILITY_TRISECT = 0.333
     WORM_EVOLVING_PROBABILITY_BISECT = 0.5
@@ -28,6 +28,7 @@ class DisplayConsts:
 class ColorConsts:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
+    BLUE = (0, 0, 255)
     GREEN = (0, 255, 0)
     RED = (255, 0, 0)
     GRAY = (50, 50, 50)
