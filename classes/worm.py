@@ -180,7 +180,8 @@ class WormHelper:
                     nearest_distance = haed_to_apple
                 
                 elif haed_to_apple < nearest_distance:
-                    nearest_apple = apple             
+                    nearest_apple = apple
+                    nearest_distance = haed_to_apple             
         
         return nearest_apple
 
