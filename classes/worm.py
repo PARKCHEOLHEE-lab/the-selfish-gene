@@ -68,13 +68,13 @@ class WormHelper:
                 pygame.Rect(pos[0], pos[1], EnvironmentConsts.WORM_SIZE, EnvironmentConsts.WORM_SIZE)
             )
     
-    def _draw_sense(self, display: pygame.display) -> None:
+    def _draw_sense(self, display: pygame.display, sense: float) -> None:
         circle_center = (
             self.body[-1][0] + EnvironmentConsts.WORM_SIZE/ 2, 
             self.body[-1][1] + EnvironmentConsts.WORM_SIZE/ 2
         )
         circle_radius = self.sense
-        num_dashes = 36
+        num_dashes = int(sense * 1.5)
         dash_length = 3
         angle_step = 360 / num_dashes
 
@@ -140,18 +140,26 @@ class WormHelper:
 
         return body
     
-    def _get_grown_body(self, body: List[List[int]], apples: List[Apple]):
+    def _get_grown_body(self, body: List[List[int]], direction: str, apples: List[Apple]):
         ate = False
         for apple in apples:
+            
             apple_x = apple.position[0] - EnvironmentConsts.WORM_SIZE / 2
             apple_y = apple.position[1] - EnvironmentConsts.WORM_SIZE / 2
-            grown_head = [apple_x, apple_y]
             
-            if body[-1] == [apple_x, apple_y]:
-                apple.eaten = True
+            if [apple_x, apple_y] in body:
+                if direction == DirectionConsts.DIRECTION_LEFT:
+                    body.append([body[-1][0] - EnvironmentConsts.WORM_SIZE, body[-1][1]])
+                elif direction == DirectionConsts.DIRECTION_UP:
+                    body.append([body[-1][0], body[-1][1] - EnvironmentConsts.WORM_SIZE])
+                elif direction == DirectionConsts.DIRECTION_RIGHT:
+                    body.append([body[-1][0] + EnvironmentConsts.WORM_SIZE, body[-1][1]])
+                elif direction == DirectionConsts.DIRECTION_DOWN:
+                    body.append([body[-1][0], body[-1][1] + EnvironmentConsts.WORM_SIZE])
+                
                 apples.remove(apple)
-                body.append(grown_head)
                 ate = True
+
                 break
             
         return body, ate
@@ -166,15 +174,15 @@ class WormHelper:
         nearest_distance = math.inf
         
         for apple in apples:
-            apple_x = apple.position[0] - EnvironmentConsts.WORM_SIZE / 2
-            apple_y = apple.position[1] - EnvironmentConsts.WORM_SIZE / 2
+            apple_x = apple.position[0]
+            apple_y = apple.position[1]
             apple_position = [apple_x, apple_y]
             
             haed_to_apple = math.sqrt(
                 (apple_position[0] - sense_origin[0])**2 + (apple_position[1] - sense_origin[1])**2
             )
             
-            if haed_to_apple <= EnvironmentConsts.WORM_SENSE:
+            if haed_to_apple <= EnvironmentConsts.WORM_SENSE_ORIGINAL + EnvironmentConsts.WORM_SIZE:  
                 if nearest_apple is None:
                     nearest_apple = apple
                     nearest_distance = haed_to_apple
@@ -186,7 +194,6 @@ class WormHelper:
         return nearest_apple
 
     def _get_direction_by_sense(self, head: List[int], nearest_apple: Apple, direction: str):
-        
         head_x = head[0]
         head_y = head[1]
         apple_x = nearest_apple.position[0] - EnvironmentConsts.WORM_SIZE / 2
@@ -234,25 +241,15 @@ class WormHelper:
     def _get_gene(self, speed: int, sense: float, switch: float):
 
         probability = random.random()
-        if probability < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_TRISECT:
-            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
-                speed += 1
-            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
-                sense += 10
-            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
-                switch += 0.03
-        
-        elif (
-            EnvironmentConsts.WORM_EVOLVING_PROBABILITY_TRISECT 
-            <= probability 
-            < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_TRISECT * 2
-        ):
-            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
-                speed -= 1
-            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
-                sense -= 10
-            if random.random() < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
-                switch -= 0.03
+        if probability < EnvironmentConsts.WORM_EVOLVING_PROBABILITY_BISECT:
+            # speed = min(5, speed + 1)
+            sense = sense + 10.5
+            switch = max(0.2, switch - 0.1)
+            
+        else:
+            # speed = max(1, speed - 1)
+            sense = max(5, sense - 5.5)
+            switch = min(0.8, switch + 0.1)
           
         return speed, sense, switch
         
@@ -269,8 +266,8 @@ class Worm(WormGene, WormHelper):
     def __init__(
         self, 
         speed: int = EnvironmentConsts.WORM_SPEED_ORIGINAL, 
-        sense: float = EnvironmentConsts.WORM_SENSE, 
-        switch: float = EnvironmentConsts.WORM_DIRECTION_SWITCH_PROBABILITY
+        sense: float = EnvironmentConsts.WORM_SENSE_ORIGINAL, 
+        switch: float = EnvironmentConsts.WORM_SWITCH_ORIGINAL
     ):
         WormGene.__init__(self, speed, sense, switch)
         self._initialize()
@@ -299,7 +296,7 @@ class Worm(WormGene, WormHelper):
         
     def drawing(self, display: pygame.display) -> None:
         self._draw_body(display, self.body, self.color)
-        self._draw_sense(display)
+        self._draw_sense(display, self.sense)
         # self._draw_eaten_count(display, self.eaten_count, self.body)
 
     def moving(self, apples: List[Apple]) -> None:
@@ -317,7 +314,7 @@ class Worm(WormGene, WormHelper):
         self.body: List[List[int]]
         ate: bool
         
-        self.body, ate = self._get_grown_body(self.body, apples)
+        self.body, ate = self._get_grown_body(self.body, self.direction, apples)
         self.eaten_count += bool(ate)
         
     def evolving(self) -> None:
@@ -326,4 +323,16 @@ class Worm(WormGene, WormHelper):
         self.switch: float
         
         self.speed, self.sense, self.switch = self._get_gene(self.speed, self.sense, self.switch)
+    
+    def reset(self) -> None:
+        self.head: List[int]
+        self.head = self._get_head()
+
+        self.body: List[List[int]]
+        self.body = self._get_body(self.head, EnvironmentConsts.WORM_BASIC_LENGTH, self.initial_direction)
         
+        self.direction: str
+        self.direction = DirectionConsts.DIRECTOIN_REVERSE[self.initial_direction]
+        
+        self.eaten_count: int
+        self.eaten_count = 0
