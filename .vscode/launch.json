@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Simulate",
             "type": "python",
             "request": "launch",
@@ -35,7 +43,7 @@
             "id": "seed",
             "description": "seed",
             "type": "promptString",
-            "default": "777"
+            "default": "77777"
         },
     ]
 }

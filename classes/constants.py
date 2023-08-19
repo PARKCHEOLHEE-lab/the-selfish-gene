@@ -1,7 +1,7 @@
 class EnvironmentConsts:
     
     WORM_SPEED_ORIGINAL = 1
-    WORM_SENSE_ORIGINAL = 30
+    WORM_SENSE_ORIGINAL = 50
     WORM_SWITCH_ORIGINAL = 0.5
     WORM_BASIC_LENGTH = 6
     WORM_EVOLVING_PROBABILITY_TRISECT = 0.333
@@ -9,7 +9,7 @@ class EnvironmentConsts:
     
     WORM_SIZE = 10
     APPLE_SIZE = 10
-    APPLE_COUNT = 20
+    APPLE_COUNT = 30
     
     INIT_GENERATION = 30
     INIT_POPULATION = 15
@@ -18,9 +18,12 @@ class EnvironmentConsts:
     
     
 class DisplayConsts:
-    WIDTH = 500
-    HEIGHT = 500
+    WIDTH = 550
+    HEIGHT = 550
     FRAME_SPEED = 50
+    
+    STATUS_FONT_SIZE = 19
+    STATUS_FONT_X_POS = 10
 
     GAP = EnvironmentConsts.WORM_SIZE * EnvironmentConsts.WORM_BASIC_LENGTH
     

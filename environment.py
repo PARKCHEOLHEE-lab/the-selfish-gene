@@ -1,5 +1,8 @@
+import os
+import json
 import random
 import pygame
+import datetime
 import argparse
 
 from classes.constants import EnvironmentConsts, ColorConsts, DisplayConsts
@@ -32,14 +35,13 @@ class EnvironmentHelper:
         display: pygame.display, 
         gen: int, 
         pop: int, 
-        apple_count: int,
         avg_speed: float,
         avg_sense: float,
         avg_switch: float,
     ) -> None:
         
-        font_x = 10
-        font_size = 18
+        font_x = DisplayConsts.STATUS_FONT_X_POS
+        font_size = DisplayConsts.STATUS_FONT_SIZE
         font = pygame.font.Font(None, font_size)
         
         gen_position = [font_x, font_x]
@@ -52,12 +54,7 @@ class EnvironmentHelper:
         pop_text_surface = font.render(pop_string, False, ColorConsts.GREEN)
         display.blit(pop_text_surface, pop_position)
         
-        apple_position = [font_x, pop_position[1] + font_size]
-        apple_string = f"apple count: {apple_count}"
-        apple_text_surface = font.render(apple_string, False, ColorConsts.RED)
-        display.blit(apple_text_surface, apple_position)
-        
-        avg_speed_position = [font_x, apple_position[1] + font_size]
+        avg_speed_position = [font_x, pop_position[1] + font_size]
         avg_speed_string = f"avg speed: {avg_speed:.2f}"
         avg_speed_text_surface = font.render(avg_speed_string, False, ColorConsts.BLUE)
         display.blit(avg_speed_text_surface, avg_speed_position)
@@ -88,6 +85,17 @@ class EnvironmentHelper:
         avg_switch = sum([worm.switch for worm in worms]) / len(worms)
         
         return avg_speed, avg_sense, avg_switch
+    
+    def _save_result_data(self, collections: dict):
+        if not os.path.isdir("data"):
+            os.mkdir("data")
+            
+        current_date_time = datetime.datetime.now()
+        formatted_date_time = current_date_time.strftime('%Y-%m-%d %H:%M:%S.%f')
+        formatted_date_time_for_filename = formatted_date_time.replace(':', '-')
+            
+        with open(f"data/result-{formatted_date_time_for_filename}.json", "w") as f:
+            json.dump(collections, f, indent=4)
             
 class Environment(EnvironmentHelper):
     def __init__(
@@ -107,21 +115,33 @@ class Environment(EnvironmentHelper):
         self.display = pygame.display.set_mode((DisplayConsts.WIDTH, DisplayConsts.HEIGHT))
         
     def simulate(self) -> None:
-        
         gen = self.generation
-        pop = self.population 
+        pop = self.population
+        seed = self.seed
         
         apple_count = EnvironmentConsts.APPLE_COUNT
         
-        speed_list = [EnvironmentConsts.WORM_SPEED_ORIGINAL]
-        sense_list = [EnvironmentConsts.WORM_SENSE_ORIGINAL]
-        switch_list = [EnvironmentConsts.WORM_SWITCH_ORIGINAL]
+        worms: List[Worm]
+        worms = [Worm() for _ in range(pop)]
         
+        collections = {
+            "preset": {
+                "generation": gen,
+                "population": pop,
+                "seed": seed,
+            },
+            "0": {
+                "speed": [EnvironmentConsts.WORM_SPEED_ORIGINAL],
+                "sense": [EnvironmentConsts.WORM_SENSE_ORIGINAL],
+                "switch": [EnvironmentConsts.WORM_SWITCH_ORIGINAL],
+            }
+        }
+
+        is_pop_1 = False
         for g in range(gen):
             
-            if g == 0:
-                worms: List[Worm]
-                worms = [Worm() for _ in range(pop)]
+            if is_pop_1:
+                break
             
             apples: List[Apple]
             apples = self._get_apples(apple_count)
@@ -141,7 +161,6 @@ class Environment(EnvironmentHelper):
                     self.display, 
                     g, 
                     pop, 
-                    apple_count,
                     avg_speed, 
                     avg_sense, 
                     avg_switch
@@ -151,9 +170,9 @@ class Environment(EnvironmentHelper):
                     apple.draw(self.display)
 
                 for worm in worms:
-                    worm.drawing(self.display)
                     worm.moving(apples)
                     worm.eating(apples)
+                    worm.drawing(self.display, apples)
                     
                 if len(apples) == 0:
                     over = True
@@ -164,23 +183,35 @@ class Environment(EnvironmentHelper):
             worms = [worm for worm in worms if worm.eaten_count > 0]
             pop = len(worms)
 
-            # worms: List[Worm]
-            # worms = [Worm() for _ in range(pop)]
+            gene_per_generation = {
+                "speed": [],
+                "sense": [],
+                "switch": [],
+            }
+
             for worm in worms:
                 worm.reset()
-                worm.evolving()
+                worm.evolving(g + 1)
                 
-                speed_list.append(worm.speed)
-                sense_list.append(worm.sense)
-                switch_list.append(worm.switch)
+                gene_per_generation["speed"].append(worm.speed)
+                gene_per_generation["sense"].append(worm.sense)
+                gene_per_generation["switch"].append(worm.switch)
+            
+            collections[f"{g + 1}"] = gene_per_generation
             
             if g % 2 == 0:
-                apple_count -= 1
+                apple_count -= 2
                 
             if apple_count == 0:
                 over = True
+                
+            if pop == 1:
+                over = True
+                is_pop_1 = True
 
         pygame.quit()
+        
+        self._save_result_data(collections)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
