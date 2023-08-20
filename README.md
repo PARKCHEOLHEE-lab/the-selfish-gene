@@ -7,10 +7,10 @@
 For example, evolving long necks have enabled giraffes to feed on leaves that others can't reach, giving them a competitive advantage. Thanks to a better food source, those with longer necks were able to survive. Those with shorter necks and access to less food would be less likely to survive.
 
 <p align="center">
-  <img src="/assets/the-selfish-gene-0.png" alt="Image" />
+  <img src="/assets/the-selfish-gene-0.png" width=60%"> <br>
+  <a href="https://www.ck12.org/book/ck-12-biology-advanced-concepts/section/10.36/">Giraffes</a> with each other different genes
 </p>
 
-[Giraffes](https://www.ck12.org/book/ck-12-biology-advanced-concepts/section/10.36/) with each other different genes
 
   
 
@@ -68,10 +68,13 @@ Following whether the sensing circle the worm has contains apples, each worm wil
   
 Else, calculate the angle between the worm's movement direction vector and the worm-to-apple vector, and calculate the difference between the angles to `select the vector with the highest similarity`. See the [code](https://github.com/PARKCHEOLHEE-lab/the-selfish-gene/blob/4eec1df9e018ea0b87fe6d3fafac892ab32cd80a/classes/worm.py#L217-L265) for detail of the worm's operation method `_get_direction_by_sense()`.  
   
+<br>
+<p align="center">
+  <img src="/assets/the-selfish-gene-1.gif" width="80%"> <br>
+  An operation of the environment and worms
+</p>
 
-![](/assets/the-selfish-gene-1.gif)
 
-An operation of the environment and worms
 
   
   
@@ -81,11 +84,12 @@ An operation of the environment and worms
 Now all preparations for the simulation are done. You can simulate natural selection as follows Fig.3: A part of the natural selection simulation  
   
 Let's fix the `generation`, `population`, and `seed` for the reproducibility of natural selection simulations, and observe which genes survive. Note that worms that do not eat even one `apple` within one generation will die.  
-  
+<br>
+<p align="center">
+  <img src="/assets/the-selfish-gene-2.gif" width="80%"> <br>
+  A part of the natural selection simulation
+</p>
 
-![](/assets/the-selfish-gene-2.gif)
-
-A part of the natural selection simulation
 
   
 I set the parameters for generation, population and seed as shown below. I then logged and visualized the results to observe how genes evolve and survive.
@@ -102,20 +106,21 @@ The `Speed` and `Sense` genes tend to increase gradually over generations. Detec
 In the case of the `Switch` gene, it started with 0.5, but the final evolved worm also returned to 0.5. In this environment, turning direction change too much seems to be against survival.  
   
 
-![](/assets/the-selfish-gene-3.png)
+<p align="center">
+  <img src="/assets/the-selfish-gene-3.png" width=85%"> <br>
+  Speed
+</p>
 
-Speed
+<p align="center">
+  <img src="/assets/the-selfish-gene-4.png" width=85%"> <br>
+  Sense
+</p>
 
+<p align="center">
+  <img src="/assets/the-selfish-gene-5.png" width=85%"> <br>
+  Switch
+</p>
   
-![](/assets/the-selfish-gene-4.png)
-
-Sense
-
-  
-![](/assets/the-selfish-gene-5.png)
-
-Switch
-
   
   
 
@@ -125,8 +130,13 @@ Lastly, I will reproduce the data of the super earthworm that survived until the
   
 It's too fast...
 
-![](/assets/the-selfish-gene-6.gif)
-
+<p align="center">
+  <img src="/assets/the-selfish-gene-6.gif" width=80%"> <br>
+  Super worm! <br>
+  Speed:13 <br>
+  Sense: 450 <br>
+  Switch: 0.48
+</p>
   
   
 
