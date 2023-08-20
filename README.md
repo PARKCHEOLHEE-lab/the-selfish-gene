@@ -22,9 +22,10 @@ Let's do a simple simulation based on the basic concepts and understanding of na
 *   sense: The distance for sensing feeds
 *   switch: The direction change probability (when there are no feeds within the distance for sensing)
 
+<br>
   
 I defined a class as below. Worms use the `moving` function that interacts with genes to act.
-
+```python
     class WormGene:
         def __init__(self, speed: int, sense: float, switch: float) -> None:
             self.speed = speed
@@ -56,12 +57,15 @@ I defined a class as below. Worms use the `moving` function that interacts with 
             
             self.body: List[List[int]]
             self.body = self._get_moved_body(self.body, self.direction, self.speed)
-
+```
   
+<br><br>
   
 If you want to see the code for `Worm` I defined, you can see it at the following link. And the environment, worms operate like the below Fig.2: An operation of the environment and worms.
 
 *   [https://github.com/PARKCHEOLHEE-lab/the-selfish-gene/blob/main/classes/worm.py](https://github.com/PARKCHEOLHEE-lab/the-selfish-gene/blob/main/classes/worm.py)
+
+<br>
 
   
 Following whether the sensing circle the worm has contains apples, each worm will have a different operation method. If apples are not within the sensing circle, worms determine the direction randomly by the `switch` gene.  
@@ -75,10 +79,9 @@ Else, calculate the angle between the worm's movement direction vector and the w
 </p>
 
 
-
+<br>
   
   
-
 ### Simulating natural selection
 
 Now all preparations for the simulation are done. You can simulate natural selection as follows Fig.3: A part of the natural selection simulation  
@@ -90,7 +93,7 @@ Let's fix the `generation`, `population`, and `seed` for the reproducibility of 
   A part of the natural selection simulation
 </p>
 
-
+<br><br>
   
 I set the parameters for generation, population and seed as shown below. I then logged and visualized the results to observe how genes evolve and survive.
 
@@ -98,6 +101,7 @@ I set the parameters for generation, population and seed as shown below. I then 
 *   population: 50
 *   seed: 6
 
+<br>
   
 Let's see the visualized results. The x-axis is generation and the y-axis indicates each gene. And in the figure, I drew a line for `average genes` per generation. The set generation is 100, but it stopped at 70 generations. This is because only one worm survived after that generation.  
   
@@ -121,18 +125,17 @@ In the case of the `Switch` gene, it started with 0.5, but the final evolved wor
   Switch
 </p>
   
-  
+<br> 
   
 
 ### A birth of the a super worm
 
 Lastly, I will reproduce the data of the super earthworm that survived until the end in the environment and finish the post.  
   
-It's too fast...
 
 <p align="center">
   <img src="/assets/the-selfish-gene-6.gif" width=80%"> <br>
-  Super worm! <br>
+  Super worm! It's too fast...<br>
   Speed:13 <br>
   Sense: 450 <br>
   Switch: 0.48
