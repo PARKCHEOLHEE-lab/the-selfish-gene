@@ -37,13 +37,13 @@
             "id": "population",
             "description": "initial population",
             "type": "promptString",
-            "default": "2"
+            "default": "50"
         },
         {
             "id": "seed",
             "description": "seed",
             "type": "promptString",
-            "default": "19940317"
+            "default": "6"
         },
     ]
 }
