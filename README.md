@@ -128,7 +128,7 @@ In the case of the `Switch` gene, it started with 0.5, but the final evolved wor
 <br> 
   
 
-### A birth of the a super worm
+### The birth of Super worm
 
 Lastly, I will reproduce the data of the super earthworm that survived until the end in the environment and finish the post.  
   
